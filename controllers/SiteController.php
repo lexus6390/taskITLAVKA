@@ -2,14 +2,21 @@
 
 namespace app\controllers;
 
+use app\models\Countries;
+use app\models\forms\CarModelsForm;
+use app\models\LanguagesMultiple;
+use app\models\search\CarsSearch;
+use app\models\search\ModelsSearch;
+use app\services\ModelService;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
 
+/**
+ * Основной контроллер приложения
+ */
 class SiteController extends Controller
 {
     /**
@@ -19,7 +26,7 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'only' => ['logout'],
                 'rules' => [
                     [
@@ -55,7 +62,7 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * Главная страница.
      *
      * @return string
      */
@@ -65,64 +72,82 @@ class SiteController extends Controller
     }
 
     /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
+     * Страница с формой для загрузки и обновления данных по авто
      *
      * @return string
      */
-    public function actionAbout()
+    public function actionFormRequest()
     {
-        return $this->render('about');
+        $carModelsForm = new CarModelsForm();
+        $countries = new Countries();
+        $data = $countries->getListCountries();
+
+        if(\Yii::$app->request->post()) {
+            $modelService = new ModelService();
+            $modelService->insertModels();
+        }
+
+        return $this->render('form_send', [
+            'carModelsForm' => $carModelsForm,
+            'data'          => $data
+        ]);
+    }
+
+    /**
+     * Получение списка доступных языков
+     *
+     * @return Response
+     */
+    public function actionGetLanguages()
+    {
+        $country = Countries::findOne(['name' => $_POST['countryName']]);
+        if($country->is_multiple_lang) {
+            /** @var LanguagesMultiple[] $languages */
+            $languagesOfCountry = $country->langMultiples;
+            $languages = [];
+            foreach ($languagesOfCountry as $key => $language) {
+                $languages[] = [
+                    'name' => $languagesOfCountry[$key]->languages->name,
+                    'code' => $languagesOfCountry[$key]->languages->code
+                ];
+            }
+
+        } else {
+            $languages = $country->languages;
+        }
+
+        return $this->asJson($languages);
+    }
+
+    /**
+     * Отображение списка моделей авто по странам
+     *
+     * @return string
+     */
+    public function actionCarList()
+    {
+        $searchModel = new ModelsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('car_list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Показывает список доступных авто определенной марки
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        $searchModel = new CarsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id);
+
+        return $this->render('view', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

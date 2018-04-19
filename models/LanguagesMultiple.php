@@ -11,7 +11,7 @@ use yii\db\ActiveRecord;
  * @property int $lang_id     Идентификатор языка
  *
  * @property Countries $country
- * @property Languages $lang
+ * @property Languages $languages
  */
 class LanguagesMultiple extends ActiveRecord
 {
@@ -70,7 +70,7 @@ class LanguagesMultiple extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getLang()
+    public function getLanguages()
     {
         return $this->hasOne(Languages::class, ['id' => 'lang_id']);
     }

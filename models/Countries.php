@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * Класс модели "countries".
@@ -64,14 +65,6 @@ class Countries extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getLang()
-    {
-        return $this->hasOne(Languages::class, ['id' => 'lang_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getLangMultiples()
     {
         return $this->hasMany(LanguagesMultiple::class, ['country_id' => 'id']);
@@ -82,7 +75,7 @@ class Countries extends ActiveRecord
      */
     public function getLanguages()
     {
-        return $this->hasMany(Languages::class, ['country_id' => 'id']);
+        return $this->hasOne(Languages::class, ['id' => 'lang_id']);
     }
 
     /**
@@ -91,5 +84,19 @@ class Countries extends ActiveRecord
     public function getModels()
     {
         return $this->hasMany(Models::class, ['country_id' => 'id']);
+    }
+
+    /**
+     * Получение списка стран для формы обновления данных
+     * @return array
+     */
+    public function getListCountries()
+    {
+        $countries = self::find()
+            ->select(['name', 'code'])
+            ->asArray()
+            ->all();
+
+        return ArrayHelper::map($countries, 'code', 'name');
     }
 }

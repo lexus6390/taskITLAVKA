@@ -9,11 +9,9 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $name
- * @property int $country_id
+ * @property string $code
  *
- * @property Countries[] $countries
  * @property LanguagesMultiple[] $langMultiples
- * @property Countries $country
  * @property Models[] $models
  */
 class Languages extends ActiveRecord
@@ -32,15 +30,7 @@ class Languages extends ActiveRecord
     public function rules()
     {
         return [
-            [['country_id'], 'integer'],
-            [['name'], 'string', 'max' => 255],
-            [
-                ['country_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Countries::class,
-                'targetAttribute' => ['country_id' => 'id']
-            ]
+            [['name', 'code'], 'string', 'max' => 255],
         ];
     }
 
@@ -50,18 +40,10 @@ class Languages extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'         => 'ID',
-            'name'       => 'Name',
-            'country_id' => 'Country ID',
+            'id'   => 'ID',
+            'name' => 'Name',
+            'code' => 'Code',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCountries()
-    {
-        return $this->hasMany(Countries::class, ['lang_id' => 'id']);
     }
 
     /**
@@ -70,14 +52,6 @@ class Languages extends ActiveRecord
     public function getLangMultiples()
     {
         return $this->hasMany(LanguagesMultiple::class, ['lang_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCountry()
-    {
-        return $this->hasOne(Countries::class, ['id' => 'country_id']);
     }
 
     /**

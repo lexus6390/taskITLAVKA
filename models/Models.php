@@ -45,7 +45,7 @@ class Models extends ActiveRecord
     {
         return [
             [['name', 'country_id'], 'required'],
-            [['country_id', 'lang_id', 'created_at', 'updated_at'], 'integer'],
+            [['country_id', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [
                 ['country_id'],
@@ -64,10 +64,10 @@ class Models extends ActiveRecord
     {
         return [
             'id'         => 'ID',
-            'name'       => 'Name',
-            'country_id' => 'Country ID',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'name'       => 'Марка',
+            'country_id' => 'Страна',
+            'created_at' => 'Создано',
+            'updated_at' => 'Изменено',
         ];
     }
 
@@ -85,5 +85,14 @@ class Models extends ActiveRecord
     public function getCountry()
     {
         return $this->hasOne(Countries::class, ['id' => 'country_id']);
+    }
+
+    /**
+     * Получение количества автомобилей определенной модели
+     * @return int|string
+     */
+    public function getCountCars()
+    {
+        return Cars::find()->where(['model_id' => $this->id])->count();
     }
 }

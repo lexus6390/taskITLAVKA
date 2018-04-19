@@ -41,7 +41,7 @@ class m180419_073759_create_base_tables extends Migration
         $this->createTable('languages', [
             'id'         => $this->primaryKey(),
             'name'       => $this->string(),
-            'country_id' => $this->integer()
+            'code'       => $this->string()
         ]);
 
         // создание таблицы стран 'countries'
@@ -76,17 +76,6 @@ class m180419_073759_create_base_tables extends Migration
             'cars',
             'model_id',
             'models',
-            'id',
-            'RESTRICT',
-            'RESTRICT'
-        );
-
-        // внешний ключ languages.country_id = countries.id
-        $this->addForeignKey(
-            'fk-languages-country_id-countries-id',
-            'languages',
-            'country_id',
-            'countries',
             'id',
             'RESTRICT',
             'RESTRICT'
@@ -137,9 +126,6 @@ class m180419_073759_create_base_tables extends Migration
 
         // удаление внешних ключей таблицы 'countries'
         $this->dropForeignKey('fk-countries-lang_id-languages-id', 'countries');
-
-        // удаление внешних ключей таблицы 'languages'
-        $this->dropForeignKey('fk-languages-country_id-countries-id', 'languages');
 
         // удаление внешних ключей таблицы 'cars'
         $this->dropForeignKey('fk-cars-model_id-models-id', 'cars');

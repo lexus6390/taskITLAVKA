@@ -62,7 +62,7 @@ class ModelService
      * @param string $langCode
      * @param int $modifiedTimestamp
      */
-    public function insertCars(Models $model, string $countryCode, string $langCode, int $modifiedTimestamp)
+    public function insertCars(Models $model, string $countryCode, string $langCode, int $modifiedTimestamp) : void
     {
         $options = [
             'https'=> [

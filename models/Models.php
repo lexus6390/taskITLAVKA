@@ -89,9 +89,9 @@ class Models extends ActiveRecord
 
     /**
      * Получение количества автомобилей определенной модели
-     * @return int|string
+     * @return int
      */
-    public function getCountCars()
+    public function getCountCars() : int
     {
         return Cars::find()->where(['model_id' => $this->id])->count();
     }

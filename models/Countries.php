@@ -90,7 +90,7 @@ class Countries extends ActiveRecord
      * Получение списка стран для формы обновления данных
      * @return array
      */
-    public function getListCountries()
+    public function getListCountries() : array
     {
         $countries = self::find()
             ->select(['name', 'code'])

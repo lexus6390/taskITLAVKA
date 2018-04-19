@@ -140,7 +140,7 @@ class SiteController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
+    public function actionView(int $id)
     {
         $searchModel = new CarsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id);

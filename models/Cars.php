@@ -89,7 +89,7 @@ class Cars extends ActiveRecord
             'id'                  => 'ID',
             'model_id'            => 'Model ID',
             'name'                => 'Название',
-            'description'         => 'Description',
+            'description'         => 'Описание',
             'engine'              => 'Двигатель',
             'grade'               => 'Класс авто',
             'transmission'        => 'Трансмиссия',
